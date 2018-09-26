@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <title>Rock, Paper, Scissors</title>
+    <style>
+       * {
+          margin:0;
+          padding:0;          
+        }        
+        body {
+          padding:10%;
+          background:#ccc;
+          color:#444;
+          font-family:Verdana,sans-serif;
+        }
+        h1 {          
+          line-height:1;
+          font-weight:250;
+          margin-bottom:1em;
+        }
+        .main {
+          padding:2em;
+          background:#eee;
+        }
+    </style>
+  </head>
+  <body>
+
+    <h1>Rock, Paper, Scissors</h1>
+
+    <div class="main">
+
+        <script>
+            this.load = function () {
+
+            }
+            const movesEnum = {"rock":1, "paper":2, "scissors":3}
+
+            // Computer
+            const botMove = Math.trunc(Math.random() * 3 + 1);
+            const playerMove = 1; // todo make player choice
+                       
+            console.log("bot: " + botMove);
+
+            // Compare user choice vs computer choice
+            const compareResults = function(choice1,choice2) {
+                // todo compare results 
+                if (choice1 == choice2){
+                    console.log('draw')
+                }               
+            };
+
+            // Run the compare function
+            const results = compareResults(playerMove,botMove);
+        </script>
+
+    </div>
+  </body>
+</html>
