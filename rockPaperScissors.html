@@ -33,27 +33,73 @@
     <div class="main">
 
         <script>
-            this.load = function () {
+            const moves = new Map(
+              [
+                [1,"rock"], 
+                [2,"paper"], 
+                [3,"scissors"]
+              ]
+            );
 
-            }
-            const movesEnum = {"rock":1, "paper":2, "scissors":3}
+            // defines all combinations of possible outcomes
+            const outcomes = {
+              rock : {
+                paper : {
+                  victory: false,
+                  message: "Paper wraps rock"
+                },
+                scissors : {
+                  victory: true,
+                  message: "Rock smashes scissors"
+                }
+              },
+              paper : {
+                rock : {
+                  victory: true,
+                  message: "Paper wraps rock"
+                },
+                scissors : {
+                  victory: false,
+                  message: "Scissors cut paper"
+                }
+              },
+              scissors : {
+                rock : {
+                  victory: false,
+                  message: "Rock smashes scissors"
+                },
+                paper : {
+                  victory: true,
+                  message: "Scissors cut paper"
+                }
+              }
+            };
 
             // Computer
-            const botMove = Math.trunc(Math.random() * 3 + 1);
+            const botMove = Math.trunc(Math.random() * moves.size + 1);
             const playerMove = 1; // todo make player choice
                        
             console.log("bot: " + botMove);
 
-            // Compare user choice vs computer choice
-            const compareResults = function(choice1,choice2) {
-                // todo compare results 
-                if (choice1 == choice2){
-                    console.log('draw')
-                }               
+            // Compare both choices
+            const compareResults = function(choice1,choice2) {                
+
+              if (choice1 == choice2){                
+                return {
+                  message: "Draw",
+                  victory: false
+                };
+              }
+
+              return outcomes[choice1][choice2];              
+
             };
 
             // Run the compare function
-            const results = compareResults(playerMove,botMove);
+            const results = compareResults(
+              moves.get(playerMove),
+              moves.get(botMove));
+            console.log(results);
         </script>
 
     </div>
