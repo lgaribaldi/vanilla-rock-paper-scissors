@@ -21,8 +21,24 @@
           margin-bottom:1em;
         }
         .main {
-          padding:2em;
+          padding:4em;
           background:#eee;
+        }
+        .row {
+          display: flex;                    
+        }
+        .block {
+          display: inline-flex; 
+          margin: 1em;          
+          padding:2em;
+          color:#eee;
+          background:#e88;          
+        }
+        .small {
+          flex: 50%;
+        }
+        .large {
+          flex: 100%;
         }
     </style>
   </head>
@@ -32,12 +48,44 @@
 
     <div class="main">
 
+      <div class="row">
+        <div class="block small">
+          Player 1
+        </div>
+
+        <div class="block small">
+          Player 2
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="block small" id="move1">
+        </div>
+
+        <div class="block small" id="move2">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="block small" id="result1">
+        </div>
+
+        <div class="block small" id="result2">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="block large" id="description">
+          Teste
+        </div>
+      </div>
+
         <script>
             const moves = new Map(
               [
-                [1,"rock"], 
-                [2,"paper"], 
-                [3,"scissors"]
+                [1,"Rock"], 
+                [2,"Paper"], 
+                [3,"Scissors"]
               ]
             );
 
@@ -45,31 +93,31 @@
             const outcomes = {
               rock : {
                 paper : {
-                  victory: false,
+                  victory: 2,
                   message: "Paper wraps rock"
                 },
                 scissors : {
-                  victory: true,
+                  victory: 1,
                   message: "Rock smashes scissors"
                 }
               },
               paper : {
                 rock : {
-                  victory: true,
+                  victory: 1,
                   message: "Paper wraps rock"
                 },
                 scissors : {
-                  victory: false,
+                  victory: 2,
                   message: "Scissors cut paper"
                 }
               },
               scissors : {
                 rock : {
-                  victory: false,
+                  victory: 2,
                   message: "Rock smashes scissors"
                 },
                 paper : {
-                  victory: true,
+                  victory: 1,
                   message: "Scissors cut paper"
                 }
               }
@@ -78,8 +126,6 @@
             // Computer
             const botMove = Math.trunc(Math.random() * moves.size + 1);
             const playerMove = 1; // todo make player choice
-                       
-            console.log("bot: " + botMove);
 
             // Compare both choices
             const compareResults = function(choice1,choice2) {                
@@ -87,11 +133,11 @@
               if (choice1 == choice2){                
                 return {
                   message: "Draw",
-                  victory: false
+                  victory: 0
                 };
               }
 
-              return outcomes[choice1][choice2];              
+              return outcomes[choice1.toLowerCase()][choice2.toLowerCase()];
 
             };
 
@@ -99,7 +145,22 @@
             const results = compareResults(
               moves.get(playerMove),
               moves.get(botMove));
-            console.log(results);
+
+            // Updates DOM
+            document.getElementById("move1").innerHTML = moves.get(playerMove);
+            document.getElementById("move2").innerHTML = moves.get(botMove);
+            document.getElementById("description").innerHTML = results.message;
+            
+            if (results.victory == 1) {
+              document.getElementById("result1").innerHTML = "Victory";
+              document.getElementById("result2").innerHTML = "Defeat";
+            } else if (results.victory == 2) {
+              document.getElementById("result1").innerHTML = "Defeat";
+              document.getElementById("result2").innerHTML = "Victory";
+            } else {
+              document.getElementById("result1").innerHTML = "&nbsp;";
+              document.getElementById("result2").innerHTML = "&nbsp;";
+            }
         </script>
 
     </div>
