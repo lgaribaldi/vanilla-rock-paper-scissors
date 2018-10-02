@@ -21,7 +21,7 @@
           margin-bottom:1em;
         }
         .main {
-          padding:4em;
+          padding:1em 4em;
           background:#eee;
         }
         .row {
@@ -30,16 +30,21 @@
         .block {
           display: inline-flex; 
           margin: 1em;          
-          padding:2em;
+          padding:0.8em 2em;
           color:#eee;
-          background:#e88;          
-        }
-        .small {
+          background:#e88;
           flex: 50%;
-        }
+        }        
         .large {
           flex: 100%;
         }
+        .button {
+          display: block;
+          padding:2em;
+          background:#444;
+          text-align: center;
+        }
+        
     </style>
   </head>
   <body>
@@ -49,83 +54,143 @@
     <div class="main">
 
       <div class="row">
-        <div class="block small">
+        <div class="block">
           Player 1
         </div>
 
-        <div class="block small">
+        <div class="block">
           Player 2
         </div>
       </div>
 
       <div class="row">
-        <div class="block small" id="move1">
+        <div class="block" id="move1">
+          &nbsp;
         </div>
 
-        <div class="block small" id="move2">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="block small" id="result1">
-        </div>
-
-        <div class="block small" id="result2">
+        <div class="block" id="move2">
+            &nbsp;
         </div>
       </div>
 
       <div class="row">
-        <div class="block large" id="description">
-          Teste
+        <div class="block large" id="description">          
+            &nbsp;
         </div>
       </div>
 
-        <script>
-            const moves = new Map(
-              [
-                [1,"Rock"], 
-                [2,"Paper"], 
-                [3,"Scissors"]
-              ]
-            );
+      <div class="row">
+        <div class="block" id="result1">
+            &nbsp;
+        </div>
 
-            // defines all combinations of possible outcomes
-            const outcomes = {
-              rock : {
-                paper : {
-                  victory: 2,
-                  message: "Paper wraps rock"
-                },
-                scissors : {
-                  victory: 1,
-                  message: "Rock smashes scissors"
-                }
-              },
+        <div class="block" id="result2">
+            &nbsp;
+        </div>
+      </div>    
+
+      <div class="row">
+        <div class="block button" id="rockBtn">
+          Rock
+        </div>
+        <div class="block button" id="paperBtn">
+          Paper
+        </div>
+        <div class="block button" id="scissorsBtn">
+          Scissors
+        </div>
+      </div>
+
+      <script>
+          const moves = new Map(
+            [
+              [1,"Rock"], 
+              [2,"Paper"], 
+              [3,"Scissors"]
+            ]
+          );
+
+          // defines all combinations of possible outcomes
+          const outcomes = {
+            rock : {
               paper : {
-                rock : {
-                  victory: 1,
-                  message: "Paper wraps rock"
-                },
-                scissors : {
-                  victory: 2,
-                  message: "Scissors cut paper"
-                }
+                victory: 2,
+                message: "Paper wraps rock"
               },
               scissors : {
-                rock : {
-                  victory: 2,
-                  message: "Rock smashes scissors"
-                },
-                paper : {
-                  victory: 1,
-                  message: "Scissors cut paper"
-                }
+                victory: 1,
+                message: "Rock smashes scissors"
               }
-            };
+            },
+            paper : {
+              rock : {
+                victory: 1,
+                message: "Paper wraps rock"
+              },
+              scissors : {
+                victory: 2,
+                message: "Scissors cut paper"
+              }
+            },
+            scissors : {
+              rock : {
+                victory: 2,
+                message: "Rock smashes scissors"
+              },
+              paper : {
+                victory: 1,
+                message: "Scissors cut paper"
+              }
+            }
+          };
 
+          const rockBtn = document.getElementById('rockBtn');
+          const paperBtn = document.getElementById('paperBtn');
+          const scissorsBtn = document.getElementById('scissorsBtn');
+          const move1 = document.getElementById("move1");
+          const move2 = document.getElementById("move2");
+          const result1 = document.getElementById("result1");
+          const result2 = document.getElementById("result2");
+          const description = document.getElementById("description");          
+
+          rockBtn.onclick = function() {
+            play(1);
+          };
+
+          paperBtn.onclick = function() {
+            play(2);
+          };
+
+          scissorsBtn.onclick = function() {
+            play(3);
+          };
+
+          const updateDom = function (results, player1, player2) {
+            move1.innerHTML = moves.get(player1);
+            move2.innerHTML = moves.get(player2);
+            description.innerHTML = results.message;
+            
+            if (results.victory == 1) {
+              result1.innerHTML = "Victory";
+              result1.style.backgroundColor = 'green';
+              result2.innerHTML = "Defeat";
+              result2.style.backgroundColor = 'red';
+            } else if (results.victory == 2) {
+              result1.innerHTML = "Defeat";
+              result1.style.backgroundColor = 'red';
+              result2.innerHTML = "Victory";
+              result2.style.backgroundColor = 'green';
+            } else {
+              result1.innerHTML = "&nbsp;";
+              result1.style.backgroundColor = '#eee';
+              result2.innerHTML = "&nbsp;";
+              result2.style.backgroundColor = '#eee';            
+            }
+          }
+
+          const play = function(playerMove) {
             // Computer
-            const botMove = Math.trunc(Math.random() * moves.size + 1);
-            const playerMove = 1; // todo make player choice
+            const botMove = Math.trunc(Math.random() * moves.size + 1);          
 
             // Compare both choices
             const compareResults = function(choice1,choice2) {                
@@ -146,22 +211,9 @@
               moves.get(playerMove),
               moves.get(botMove));
 
-            // Updates DOM
-            document.getElementById("move1").innerHTML = moves.get(playerMove);
-            document.getElementById("move2").innerHTML = moves.get(botMove);
-            document.getElementById("description").innerHTML = results.message;
-            
-            if (results.victory == 1) {
-              document.getElementById("result1").innerHTML = "Victory";
-              document.getElementById("result2").innerHTML = "Defeat";
-            } else if (results.victory == 2) {
-              document.getElementById("result1").innerHTML = "Defeat";
-              document.getElementById("result2").innerHTML = "Victory";
-            } else {
-              document.getElementById("result1").innerHTML = "&nbsp;";
-              document.getElementById("result2").innerHTML = "&nbsp;";
-            }
-        </script>
+            updateDom(results, playerMove, botMove);                      
+          }          
+      </script>
 
     </div>
   </body>
