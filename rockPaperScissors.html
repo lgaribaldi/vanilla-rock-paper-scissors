@@ -7,15 +7,15 @@
     <style>
        * {
           margin:0;
-          padding:0;          
-        }        
+          padding:0;
+        }
         body {
           padding:10%;
           background:#ccc;
           color:#444;
           font-family:Verdana,sans-serif;
         }
-        h1 {          
+        h1 {
           line-height:1;
           font-weight:250;
           margin-bottom:1em;
@@ -25,16 +25,16 @@
           background:#eee;
         }
         .row {
-          display: flex;                    
+          display: flex;
         }
         .block {
-          display: inline-flex; 
-          margin: 1em;          
+          display: inline-flex;
+          margin: 1em;
           padding:0.8em 2em;
           color:#eee;
-          background:#e88;
+          background:#aaa;
           flex: 50%;
-        }        
+        }
         .large {
           flex: 100%;
         }
@@ -44,7 +44,7 @@
           background:#444;
           text-align: center;
         }
-        
+
     </style>
   </head>
   <body>
@@ -57,9 +57,12 @@
         <div class="block">
           Player 1
         </div>
-
+        <div class="block" id="score1">
+        </div>
         <div class="block">
           Player 2
+        </div>
+        <div class="block" id="score2">
         </div>
       </div>
 
@@ -74,7 +77,7 @@
       </div>
 
       <div class="row">
-        <div class="block large" id="description">          
+        <div class="block large" id="description">
             &nbsp;
         </div>
       </div>
@@ -87,7 +90,7 @@
         <div class="block" id="result2">
             &nbsp;
         </div>
-      </div>    
+      </div>
 
       <div class="row">
         <div class="block button" id="rockBtn">
@@ -101,11 +104,17 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="block button" id="autoBtn">
+          Autopilot
+        </div>
+      </div>
+
       <script>
           const moves = new Map(
             [
-              [1,"Rock"], 
-              [2,"Paper"], 
+              [1,"Rock"],
+              [2,"Paper"],
               [3,"Scissors"]
             ]
           );
@@ -147,11 +156,18 @@
           const rockBtn = document.getElementById('rockBtn');
           const paperBtn = document.getElementById('paperBtn');
           const scissorsBtn = document.getElementById('scissorsBtn');
+          const autoBtn = document.getElementById('autoBtn');
           const move1 = document.getElementById("move1");
           const move2 = document.getElementById("move2");
           const result1 = document.getElementById("result1");
           const result2 = document.getElementById("result2");
-          const description = document.getElementById("description");          
+          const description = document.getElementById("description");
+          const score1 = document.getElementById("score1");
+          const score2 = document.getElementById("score2");
+          let autopilot = false;
+          let autopilotHandle;
+          let player1Wins = 0;
+          let player2Wins = 0;
 
           rockBtn.onclick = function() {
             play(1);
@@ -165,54 +181,77 @@
             play(3);
           };
 
+          autoBtn.onclick = function () {
+            autopilot = !autopilot;
+
+            if (autopilot) {
+              autoBtn.style.backgroundColor = '#4392f1';
+              autopilotHandle = setInterval(function () {
+                play(getBotMove());
+              }, 2000);
+            } else {
+              autoBtn.style.backgroundColor = '#444';
+              clearInterval(autopilotHandle);
+            }
+          }
+
           const updateDom = function (results, player1, player2) {
             move1.innerHTML = moves.get(player1);
             move2.innerHTML = moves.get(player2);
             description.innerHTML = results.message;
-            
+
             if (results.victory == 1) {
               result1.innerHTML = "Victory";
-              result1.style.backgroundColor = 'green';
+              result1.style.backgroundColor = '#4392f1';
               result2.innerHTML = "Defeat";
-              result2.style.backgroundColor = 'red';
+              result2.style.backgroundColor = '#de3c4b';
+              score1.innerHTML = player1Wins.toString() + " victories";
             } else if (results.victory == 2) {
               result1.innerHTML = "Defeat";
-              result1.style.backgroundColor = 'red';
+              result1.style.backgroundColor = '#de3c4b';
               result2.innerHTML = "Victory";
-              result2.style.backgroundColor = 'green';
+              result2.style.backgroundColor = '#4392f1';
+              score2.innerHTML = player2Wins.toString() + " victories";
             } else {
               result1.innerHTML = "&nbsp;";
               result1.style.backgroundColor = '#eee';
               result2.innerHTML = "&nbsp;";
-              result2.style.backgroundColor = '#eee';            
+              result2.style.backgroundColor = '#eee';
             }
-          }
+          };
+
+          const getBotMove = function() {
+            return Math.trunc(Math.random() * moves.size + 1);
+          };
+
+          // Compare both choices
+          const compareResults = function(choice1,choice2) {
+            if (choice1 == choice2){
+              return {
+                message: "Draw",
+                victory: 0
+              };
+            }
+            return outcomes[choice1.toLowerCase()][choice2.toLowerCase()];
+          };
 
           const play = function(playerMove) {
             // Computer
-            const botMove = Math.trunc(Math.random() * moves.size + 1);          
-
-            // Compare both choices
-            const compareResults = function(choice1,choice2) {                
-
-              if (choice1 == choice2){                
-                return {
-                  message: "Draw",
-                  victory: 0
-                };
-              }
-
-              return outcomes[choice1.toLowerCase()][choice2.toLowerCase()];
-
-            };
+            const botMove = getBotMove();
 
             // Run the compare function
             const results = compareResults(
               moves.get(playerMove),
               moves.get(botMove));
 
-            updateDom(results, playerMove, botMove);                      
-          }          
+            if (results.victory == 1){
+              player1Wins++;
+            } else if (results.victory == 2){
+              player2Wins++;
+            }
+
+            updateDom(results, playerMove, botMove);
+          }
       </script>
 
     </div>
